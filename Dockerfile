@@ -13,7 +13,10 @@
 # image's pins drift away from the forks' versions.
 
 # ── Stage 1: build both forks from source ────────────────────────────
-FROM node:22-alpine AS builder
+# Always runs on the native build platform: the output (compiled JS dist
+# trees) is architecture-independent, and tsc under QEMU emulation
+# crashes with SIGILL on cross-arch builds.
+FROM --platform=$BUILDPLATFORM node:22-alpine AS builder
 
 RUN apk add --no-cache git
 
