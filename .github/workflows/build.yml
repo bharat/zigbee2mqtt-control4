@@ -44,10 +44,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          # latest is the canonical tag; c4forks is a transition alias kept
-          # while prod compose still pins it, and sha tags are the rollback
-          # anchors.
+          # latest is the canonical tag; sha tags are immutable rollback anchors.
           tags: |
             ${{ env.IMAGE }}:latest
-            ${{ env.IMAGE }}:c4forks
             ${{ env.IMAGE }}:${{ github.sha }}
