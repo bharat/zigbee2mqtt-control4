@@ -1,14 +1,14 @@
 # Zigbee2MQTT with native Control4 support, built from the forks:
-#   - bharat/zigbee-herdsman        @ control4-prod (profile whitelist + sendRaw + interview quirk)
-#   - bharat/zigbee-herdsman-converters @ control4  (src/devices/control4.ts, in-tree definition)
+#   - bharat/zigbee-herdsman        @ control4-prod-10.10.0 (sendRaw; the profile whitelist and interview quirk landed upstream in 10.10.0)
+#   - bharat/zigbee-herdsman-converters @ control4-26.115.1 (src/devices/control4.ts, in-tree definition)
 #
 # Replaces the sed-patch approach entirely: both libraries' dist/ trees are
 # compiled from source in a builder stage and swapped into the stock image,
 # with loud verification. The external converter is retired; the entrypoint
 # disables any legacy copy left in the data dir (reversibly).
 #
-# Version discipline: the base image pins zigbee-herdsman 10.8.0 and
-# zigbee-herdsman-converters 26.90.0; both fork branches are based on
+# Version discipline: the base image pins zigbee-herdsman 10.10.0 and
+# zigbee-herdsman-converters 26.115.1; both fork branches are based on
 # exactly those versions. The verify step fails the build if the base
 # image's pins drift away from the forks' versions.
 
@@ -23,9 +23,9 @@ RUN apk add --no-cache git
 WORKDIR /build
 
 ARG ZH_REPO=https://github.com/bharat/zigbee-herdsman.git
-ARG ZH_REF=control4-prod
+ARG ZH_REF=control4-prod-10.10.0
 ARG ZHC_REPO=https://github.com/bharat/zigbee-herdsman-converters.git
-ARG ZHC_REF=control4
+ARG ZHC_REF=control4-26.115.1
 
 RUN git clone --depth 1 --branch "$ZH_REF" "$ZH_REPO" zh && \
     cd zh && corepack pnpm install --frozen-lockfile --ignore-scripts && corepack pnpm run build && \
