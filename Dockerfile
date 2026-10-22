@@ -54,8 +54,13 @@ LABEL org.opencontainers.image.description="Zigbee2MQTT with native Control4 dim
 # weekly rebuild tracks them. Native addons (serialport) are N-API prebuilds,
 # ABI-stable across 24.x. Drop the apk package so `node` resolves to exactly
 # one binary; the version-skew checks below then run on the new one.
+# libstdc++ and ca-certificates were only in the image as nodejs
+# dependencies, so pin them to world first or `apk del` purges them too
+# (the official binary needs libstdc++; verified locally 2026-10-21).
 COPY --from=node:24-alpine /usr/local/bin/node /usr/local/bin/node
-RUN apk del --no-cache nodejs && test ! -e /usr/bin/node && node -v
+RUN apk add --no-cache libstdc++ ca-certificates && \
+    apk del --no-cache nodejs && \
+    test ! -e /usr/bin/node && node -v
 
 COPY --from=builder /build/zh/dist /tmp/fork/zh-dist
 COPY --from=builder /build/zh/package.json /tmp/fork/zh-package.json
