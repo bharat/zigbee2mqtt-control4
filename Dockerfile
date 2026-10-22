@@ -42,6 +42,21 @@ FROM koenkk/zigbee2mqtt:latest
 LABEL org.opencontainers.image.source="https://github.com/bharat/zigbee2mqtt-control4"
 LABEL org.opencontainers.image.description="Zigbee2MQTT with native Control4 dimmer/keypad support"
 
+# Replace upstream's Node with the official node:24-alpine binary.
+# Upstream installs Node via `apk add nodejs`, dynamically linked against
+# Alpine's brotli / c-ares / openssl packages. A Node security release then
+# reaches this image only after Alpine patches those packages AND upstream
+# cuts its monthly release to rebuild `latest` -- weeks (Oct 2026: Node
+# 24.22.1 fixed a Brotli RCE + TLS hostname bypasses; Alpine 3.24 still
+# shipped 24.18.1 with an unpatched brotli). The official binary bundles its
+# own patched deps, needs only musl + libstdc++ (both already here), and the
+# node:24-alpine tag is rebuilt within a day of each Node release, so the
+# weekly rebuild tracks them. Native addons (serialport) are N-API prebuilds,
+# ABI-stable across 24.x. Drop the apk package so `node` resolves to exactly
+# one binary; the version-skew checks below then run on the new one.
+COPY --from=node:24-alpine /usr/local/bin/node /usr/local/bin/node
+RUN apk del --no-cache nodejs && test ! -e /usr/bin/node && node -v
+
 COPY --from=builder /build/zh/dist /tmp/fork/zh-dist
 COPY --from=builder /build/zh/package.json /tmp/fork/zh-package.json
 COPY --from=builder /build/zhc/dist /tmp/fork/zhc-dist
