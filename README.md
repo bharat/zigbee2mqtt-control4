@@ -26,7 +26,7 @@ entrypoint disables any legacy `control4.mjs` left in the data directory
 (reversibly, by renaming it to `.disabled`).
 
 The Home Assistant side lives in
-[bharat/homeassistant-control4-dimmers](https://github.com/bharat/homeassistant-control4-dimmers)
+[bharat/homeassistant-control4-zigbee](https://github.com/bharat/homeassistant-control4-zigbee)
 (HACS integration: Lovelace chassis editor, button event entities, LED
 config services).
 
@@ -61,7 +61,7 @@ The build fails loudly rather than shipping a broken image:
 
 This image succeeds an earlier approach that patched the compiled herdsman
 JS with `sed` and injected an external converter at container start (see
-homeassistant-control4-dimmers issue
-[#104](https://github.com/bharat/homeassistant-control4-dimmers/issues/104)
+homeassistant-control4-zigbee issue
+[#104](https://github.com/bharat/homeassistant-control4-zigbee/issues/104)
 for the full journey). The fork-build approach replaced it once the
 converter was ported in-tree and the interview quirk landed.
