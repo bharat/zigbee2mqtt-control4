@@ -9,7 +9,23 @@ on:
   # onto, so a silent drift cannot ship.
   schedule:
     - cron: "26 5 * * 2"
+  # Manual runs build a test image tagged :next from any fork branch, so a
+  # change can be tried on a real network before it reaches :latest (which
+  # deployments auto-update from). A manual run never publishes :latest.
   workflow_dispatch:
+    inputs:
+      zhc_repo:
+        description: "zigbee-herdsman-converters repository to build from"
+        default: "https://github.com/bharat/zigbee-herdsman-converters.git"
+      zhc_ref:
+        description: "zigbee-herdsman-converters branch or tag"
+        default: "control4-26.125.0"
+      zh_repo:
+        description: "zigbee-herdsman repository to build from"
+        default: "https://github.com/bharat/zigbee-herdsman.git"
+      zh_ref:
+        description: "zigbee-herdsman branch or tag"
+        default: "control4-prod-11.2.0"
 
 permissions:
   contents: read
@@ -38,7 +54,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push (latest)
+        if: github.event_name != 'workflow_dispatch'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -48,3 +65,20 @@ jobs:
           tags: |
             ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ github.sha }}
+
+      - name: Build and push (next)
+        if: github.event_name == 'workflow_dispatch'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          build-args: |
+            ZHC_REPO=${{ inputs.zhc_repo }}
+            ZHC_REF=${{ inputs.zhc_ref }}
+            ZH_REPO=${{ inputs.zh_repo }}
+            ZH_REF=${{ inputs.zh_ref }}
+          # next-<run> tags keep each test build addressable after :next moves.
+          tags: |
+            ${{ env.IMAGE }}:next
+            ${{ env.IMAGE }}:next-${{ github.run_number }}
