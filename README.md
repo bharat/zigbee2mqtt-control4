@@ -87,6 +87,15 @@ start the image by the digest you noted.
 | `latest` | Tracks `main`; rebuilt weekly against the upstream base |
 | `c4forks` | Transition alias of `latest` (kept while deployments still pin it) |
 | `<sha>` | Immutable build anchors, use for rollback |
+| `next` | Test build of a change that has not reached `latest` yet; only ever built by hand |
+| `next-<n>` | Immutable anchor for each test build |
+
+`latest` only ever contains code from the production fork branches. A change
+that is risky or permanent (like a database rewrite) is first built as `next`
+from its own branch: run the workflow by hand with that branch as an input.
+To try it, switch the container to `:next` by hand (tools that auto-update
+from `:latest` will not touch it), then switch back to `:latest` once the
+change is merged.
 
 ## History
 
