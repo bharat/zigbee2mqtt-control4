@@ -51,6 +51,15 @@ The build fails loudly rather than shipping a broken image:
 
 ## Upgrade notes
 
+### Builds from 2026-11-15 (later): the C4-FPD120 is recognized
+
+A C4-FPD120 (forward phase dimmer) now reports its real model and is typed as
+a dimmer. Like the other models, its stored modelID in `database.db` is
+rewritten from `C4-Zigbee` to `C4-FPD120` the first time it reports, one way:
+back up the data directory before pulling, and an older image will not
+recognize the device after the rewrite. Zigbee2MQTT shows the new model
+after its next restart.
+
 ### Builds from 2026-11-15 onward: device type comes from the model
 
 Control4 devices are now typed from the model they report instead of being
