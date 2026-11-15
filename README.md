@@ -51,6 +51,20 @@ The build fails loudly rather than shipping a broken image:
 
 ## Upgrade notes
 
+### Builds from 2026-11-15 onward: device type comes from the model
+
+Control4 devices are now typed from the model they report instead of being
+guessed from their dimming phase, which often guessed wrong. A C4-KD120 is
+always a keypad dimmer, a C4-APD120 always a dimmer and a C4-KC120277 always
+a keypad. Devices stored with the wrong type are corrected within about a
+minute of starting, without re-pairing (the log shows
+`dimmer -> keypaddim (reported model C4-KD120)` and similar).
+
+In Home Assistant, a corrected device gets the button layout of its real
+model, so automations that used button events from a mistyped device may
+need their button numbers updated. Other models (the C4-SW120277 relay, the
+C4-V-ROSW120 outlet and older dimmers) are typed as before.
+
 ### Builds from 2026-11-10 onward: real model names (one-way database change)
 
 Control4 devices now report their real model and firmware version
