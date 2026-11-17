@@ -51,6 +51,15 @@ The build fails loudly rather than shipping a broken image:
 
 ## Upgrade notes
 
+### Builds from 2026-11-16 onward: hardened against malformed and forged frames
+
+The Control4 converter now rejects malformed or forged input instead of acting
+on it: unknown button wire ids, oversized or out-of-range values, command text
+smuggled into LED commands, and replies that come from a different device than
+the one asked. It also fixes a crash: removing a Control4 device while it was
+still being detected could stop Zigbee2MQTT. Nothing in `database.db` changes,
+and normal devices behave exactly as before.
+
 ### Builds from 2026-11-15 (later): the C4-FPD120 is recognized
 
 A C4-FPD120 (forward phase dimmer) now reports its real model and is typed as
