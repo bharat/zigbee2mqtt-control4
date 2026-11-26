@@ -51,6 +51,14 @@ The build fails loudly rather than shipping a broken image:
 
 ## Upgrade notes
 
+### Builds from 2026-11-26 onward: the C4-SW120277 is an on/off light
+
+The C4-SW120277 is an on/off switch, so its light no longer offers a
+brightness slider that did nothing. Existing light entities keep their name
+and entity ID and lose only the slider. Automations that set brightness on
+these switches have no effect and can drop it. Nothing in `database.db`
+changes, and an older image brings the slider back.
+
 ### Builds from 2026-11-16 onward: hardened against malformed and forged frames
 
 The Control4 converter now rejects malformed or forged input instead of acting
